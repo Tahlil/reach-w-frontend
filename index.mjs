@@ -1,12 +1,18 @@
-import {loadStdlib} from '@reach-sh/stdlib';
+import {loadStdlib, ask} from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib(process.env);
 
 const startingBalance = stdlib.parseCurrency(100);
 
+const isAlice = await ask.ask(
+  'Are you Alice',
+  ask.yesno
+);
+const who = isAlice ? 'Alice' : 'Bob';
+console.log(`Starting RPS! as ${who}`);
+
 const [ accAlice, accBob ] =
   await stdlib.newTestAccounts(2, startingBalance);
-console.log('Hello, Alice and Bob!');
 
 console.log('Launching...');
 const ctcAlice = accAlice.contract(backend);
