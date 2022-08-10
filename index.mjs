@@ -2,8 +2,6 @@ import {loadStdlib, ask} from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib(process.env);
 
-const startingBalance = stdlib.parseCurrency(100);
-
 const isAlice = await ask.ask(
   'Are you Alice',
   ask.yesno
@@ -11,11 +9,42 @@ const isAlice = await ask.ask(
 const who = isAlice ? 'Alice' : 'Bob';
 console.log(`Starting RPS! as ${who}`);
 
-const [ accAlice, accBob ] =
-  await stdlib.newTestAccounts(2, startingBalance);
+let acc = null;
+const createAcc = await ask.ask(
+  `Would you like to create an account ${who} on devnet?`,
+  ask.yesno
+);
+
+if (createAcc) {
+  acc = await stdlib.newTestAccounts(stdlib.parseCurrency(100));
+}
+else{
+  const secret = await ask.ask(
+    `What is your secret?`,
+    (x => x)
+  );
+  acc = await stdlib.newAccountFromSecret(secret);
+}
+
+let ctc = null;
+if(isAlice){
+  ctc = acc.contract(backend);
+  ctc.getInfo().then((info) => {
+    console.log(`The contract is deployed as = ${JSON.stringify(info)}`);
+  }).catch((err) => {
+    console.error(err);
+  });
+}
+else{
+  const info = await ask.ask(
+    `Please paste the contract information: `,
+    JSON.parse
+  );
+  ctc = acc.contract(backend, info);
+}
 
 console.log('Launching...');
-const ctcAlice = accAlice.contract(backend);
+
 const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 
 console.log('Starting backends...');
