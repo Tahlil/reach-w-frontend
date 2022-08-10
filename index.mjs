@@ -46,9 +46,11 @@ else{
 const fmt =(x) => stdlib.formatCurrency(x, 4);
 const getBalance = async () => fmt(await stdlib.balanceOf(acc));
 
-console.log('Launching...');
-
-const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
+const interact = {...stdlib.hasRandom};
+interact.informTimeout = () => {
+  console.log(`There was a timeout`);
+  process.exit(1);
+}
 
 console.log('Starting backends...');
 await Promise.all([
