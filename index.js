@@ -39,4 +39,18 @@ class App extends React.Component {
     render() { return renderView(this, AppViews); }
   }
 
+  class Player extends React.Component {
+    random() { return reach.hasRandom.random(); }
+    async getHand() {
+      const hand = await new Promise(resolveHandP => {
+        this.setState({view: 'GetHand', playable: true, resolveHandP});
+      });
+      this.setState({view: 'WaitingForResults', hand});
+      return handToInt[hand];
+    }
+    seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i]}); }
+    informTimeout() { this.setState({view: 'Timeout'}); }
+    playHand(hand) { this.state.resolveHandP(hand); }
+  }
+
 renderDOM(<App />);
