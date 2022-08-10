@@ -62,7 +62,7 @@ if (isAlice) {
   interact.deadline = { ETH: 200, ALGO: 200, CFX: 900}[stdlib.connector]
 }
 else{
-  interact.acceptWager = async (ant) => {
+  interact.acceptWager = async (amt) => {
     const accepted = await ask.ask(
       `Do you accept the wager of ${fmt(amt)}`,
       ask.yesno
@@ -71,6 +71,23 @@ else{
       process.exit(1);
     }
   }
+}
+
+const HAND = ['Rock', 'Paper', 'Scissors'];
+const HANDS = {
+  'Rock': 0, 'R': 0, 'r': 0,
+  'Paper': 1, 'P': 1, 'p': 1,
+  'Scissors': 2, 'S': 2, 's': 2,
+}
+
+interact.getHand = async() => {
+  const hand = await ask.ask(`What hand will you play`, (x) => {
+    const hand= HAND[x];
+    if (hand === undefined) {
+      throw Error(`Not a valid hand ${hand}`);
+    }
+    return hand;
+  })
 }
 
 console.log('Starting backends...');
