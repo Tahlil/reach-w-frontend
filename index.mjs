@@ -43,6 +43,9 @@ else{
   ctc = acc.contract(backend, info);
 }
 
+const fmt =(x) => stdlib.formatCurrency(x, 4);
+const getBalance = async () => fmt(await stdlib.balanceOf(acc));
+
 console.log('Launching...');
 
 const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
