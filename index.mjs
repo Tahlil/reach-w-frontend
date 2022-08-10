@@ -16,7 +16,7 @@ const createAcc = await ask.ask(
 );
 
 if (createAcc) {
-  acc = await stdlib.newTestAccounts(stdlib.parseCurrency(100));
+  acc = await stdlib.newTestAccount(stdlib.parseCurrency(1000));
 }
 else{
   const secret = await ask.ask(
@@ -46,6 +46,9 @@ else{
 const fmt =(x) => stdlib.formatCurrency(x, 4);
 const getBalance = async () => fmt(await stdlib.balanceOf(acc));
 
+const before = await getBalance();
+console.log(`Your balance is ${before}`);
+
 const interact = {...stdlib.hasRandom};
 interact.informTimeout = () => {
   console.log(`There was a timeout`);
@@ -54,7 +57,7 @@ interact.informTimeout = () => {
 
 if (isAlice) {
   const amt = await ask.ask(
-    `How much do you want to wasger`,
+    `How much do you want to wager`,
     stdlib.parseCurrency
   );
 
@@ -78,17 +81,19 @@ const HANDS = {
   'Rock': 0, 'R': 0, 'r': 0,
   'Paper': 1, 'P': 1, 'p': 1,
   'Scissors': 2, 'S': 2, 's': 2,
-}
+};
 
-interact.getHand = async() => {
-  const hand = await ask.ask(`What hand will you play`, (x) => {
-    const hand= HAND[x];
-    if (hand === undefined) {
+interact.getHand = async () => {
+  const hand = await ask.ask(`What hand will you play?`, (x) => {
+    const hand = HANDS[x];
+    if ( hand === undefined ) {
       throw Error(`Not a valid hand ${hand}`);
     }
     return hand;
-  })
-}
+  });
+  console.log(`You played ${HAND[hand]}`);
+  return hand;
+};
 
 const OUTCOME = ['Bob wins', 'Draw', 'Alic wins'];
 interact.seeOutcome = async (outcome) => {
