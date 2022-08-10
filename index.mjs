@@ -90,6 +90,10 @@ interact.getHand = async() => {
   })
 }
 
+const OUTCOME = ['Bob wins', 'Draw', 'Alic wins'];
+interact.seeOutcome = async (outcome) => {
+  console.log(`The outcome is: ${OUTCOME[outcome]}`);
+}
 console.log('Starting backends...');
 await Promise.all([
   backend.Alice(ctcAlice, {
