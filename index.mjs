@@ -52,6 +52,27 @@ interact.informTimeout = () => {
   process.exit(1);
 }
 
+if (isAlice) {
+  const amt = await ask.ask(
+    `How much do you want to wasger`,
+    stdlib.parseCurrency
+  );
+
+  interact.wager = amt;
+  interact.deadline = { ETH: 200, ALGO: 200, CFX: 900}[stdlib.connector]
+}
+else{
+  interact.acceptWager = async (ant) => {
+    const accepted = await ask.ask(
+      `Do you accept the wager of ${fmt(amt)}`,
+      ask.yesno
+    );
+    if(!accepted) {
+      process.exit(1);
+    }
+  }
+}
+
 console.log('Starting backends...');
 await Promise.all([
   backend.Alice(ctcAlice, {
